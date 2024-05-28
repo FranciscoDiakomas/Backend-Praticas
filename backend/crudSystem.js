@@ -92,19 +92,19 @@ app.post("/users",(req , res)=>{
 
     const{nome , nacionalidade ,email , tel , profissao} = req.body 
     
-        if(!nome){
+        if(String(nome).length === 0){
             res.json({msg : "Nome em falta"}).status(422)
         }
-        else if(!nacionalidade){
+        else if(String(nacionalidade).length === 0){
             res.json({msg : "Nacionalidade em falta"}).status(422)
         }
-        else if(!email){
+        else if(String(email).length === 0){
             res.json({msg : "Email em falta"}).status(422)
         }
-        else if(!tel){
+        else if(String(tel).length === 0){
             res.json({msg : "Telefone em falta"}).status(422)
         }
-        else if(!profissao){
+        else if(String(profissao).length === 0){
             res.json({msg : "Profissão em falta"}).status(422)
         }else{
             if(validator.isEmail(email)){
@@ -131,8 +131,6 @@ app.post("/users",(req , res)=>{
             }else{
                 res.json({msg: "email incorrecto, \n ex: client@gmail.com"})
             }
-           
-          
         }
 })
 
