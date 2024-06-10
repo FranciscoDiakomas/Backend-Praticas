@@ -133,17 +133,16 @@ app.delete("/user/:id",(req,res)=>{
                     status : "sucesso!"
                 }).status(200)
             }else{
-                sql = "delete from user where id = ?"
+                sql = "delete from Users where id = ?"
                 conexion.query(sql,[id],(err,resultado)=>{
                     if(err){
                     res.json({
-                    msg : "Erro ao tentar elimiar o usuário",
+                    msg : err,
                     status : "Error"
                 }).status(400)
                 }else{
                 res.json({
                     msg : "Usuário Eliminado",
-                    data : resultado,
                     status :"sucess"
                 }).status(200)
                 }
@@ -209,7 +208,7 @@ app.post("/user",async(req,res)=>{
 })
 
 //logar
-app.get("/logar",(req,res)=>{
+app.post("/logar",(req,res)=>{
     let {email, senha} = req.body
     if(String(email).length === 0){
         res.json({
@@ -238,17 +237,17 @@ app.get("/logar",(req,res)=>{
                         status :"sucess"
                     }).status(200)
                     }else{
-                        let senhaEncriptada = resultado[0]
-                        let resposta =  bcrypt.compareSync(senha,senhaEncriptada)
-                        if(resposta){
-                            res.json({
+                        let senhaEncriptada = resultado[0].senha
+                    if(senhaEncriptada === senha){
+                        res.json({
                                 msg : "Usuário autentificado",
-                                status : "logado"
+                                status : "Logado"
                             }).status(200)
-                        }else{
+                    }
+                    else{
                             res.json({
-                                msg : "Erro na autenticação",
-                                status : "Error"
+                                msg : "Usuário não autenticação",
+                                status : "Senha incorrecta"
                             }).status(400)
                         }
                     }
