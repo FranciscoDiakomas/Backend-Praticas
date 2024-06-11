@@ -3,15 +3,9 @@ const { connection } = require('mongoose')
 async function main() {
 const express = require('express')
 const mysql = require('mysql')
-const bcrypt = require('bcrypt')
 const validator = require('validator')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const dotenv = require('dotenv')
-dotenv.config()
-
-
-
 const app = express()
 const port = process.env.PORT ||3030
 
@@ -179,8 +173,8 @@ app.post("/user",async(req,res)=>{
     }else{
         
         if(validator.isEmail(email)){
-            let senhaEncriptada = await bcrypt.hash(senha,10)
-            let data = [nome , email , senhaEncriptada]
+            if(validator.isStrongPassword(senha)){
+            let data = [nome , email , senha]
             sql = "insert into Users(nome,email,senha) values (?);"
             conexion.query(sql,[data],(err,result)=>{
                 if(err){
@@ -197,6 +191,12 @@ app.post("/user",async(req,res)=>{
                 }
             })
 
+            }else{
+                res.json({
+                    msg : "senha Fraca",
+                    status : "tente combinar números,letras,símbolos"
+                }).status(400)
+            }
         }else{
             res.json({
                 msg : "Email inválido",
@@ -208,7 +208,7 @@ app.post("/user",async(req,res)=>{
 })
 
 //logar
-app.post("/logar",(req,res)=>{
+app.post("/login",(req,res)=>{
     let {email, senha} = req.body
     if(String(email).length === 0){
         res.json({
@@ -238,7 +238,7 @@ app.post("/logar",(req,res)=>{
                     }).status(200)
                     }else{
                         let senhaEncriptada = resultado[0].senha
-                    if(senhaEncriptada === senha){
+                    if(senha == senhaEncriptada){
                         res.json({
                                 msg : "Usuário autentificado",
                                 status : "Logado"
